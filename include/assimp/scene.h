@@ -420,7 +420,9 @@ struct aiScene
         for (unsigned int i = 0; i < mNumTextures; i++) {
             const char* shortTextureFilename = GetShortFilename(mTextures[i]->mFilename.C_Str());
             if (strcmp(shortTextureFilename, shortFilename) == 0) {
-                return std::make_pair(mTextures[i], i);
+                // NP FIX: broken function but we won't have more than 2b textures so just cast to silence the warning
+                return std::make_pair(mTextures[i], static_cast<int>(i));
+                // END NP
             }
         }
         return std::make_pair(nullptr, -1);
