@@ -1521,7 +1521,11 @@ inline void Camera::Read(Value &obj, Asset & /*r*/) {
     if (type == Camera::Perspective) {
         cameraProperties.perspective.aspectRatio = MemberOrDefault(*it, "aspectRatio", 0.f);
         cameraProperties.perspective.yfov = MemberOrDefault(*it, "yfov", 3.1415f / 2.f);
-        cameraProperties.perspective.zfar = MemberOrDefault(*it, "zfar", 100.f);
+		// SMW FIX - spec states that a missing zfar (for perspective cameras only) means an infinite projection
+		// I don't want to add another member to cameras globally, so just use 0 as a flag for now
+		// The spec defines 0 as an invalid value, so it can be relied on as a hacky client-side flag
+        cameraProperties.perspective.zfar = MemberOrDefault(*it, "zfar", 0.f);
+		// END SMW
         cameraProperties.perspective.znear = MemberOrDefault(*it, "znear", 0.01f);
     } else {
         cameraProperties.ortographic.xmag = MemberOrDefault(*it, "xmag", 1.f);
