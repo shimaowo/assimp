@@ -843,7 +843,11 @@ void glTF2Importer::ImportCameras(glTF2::Asset &r) {
 
         if (cam.type == Camera::Perspective) {
             aicam->mAspect = cam.cameraProperties.perspective.aspectRatio;
-            aicam->mHorizontalFOV = cam.cameraProperties.perspective.yfov * ((aicam->mAspect == 0.f) ? 1.f : aicam->mAspect);
+			// SMW FIX - the previous math here was just completely incorrect
+			// This still incorrectly handles 0 aspect according to the spec,
+			// but there's nothing we can do about it here because assimp is too lossy
+			aicam->mHorizontalFOV = 2.0f * std::atan(std::tan(cam.cameraProperties.perspective.yfov * 0.5f) * (aicam->mAspect == 0.f) ? 1.f : aicam->mAspect);
+			// END SMW
             aicam->mClipPlaneFar = cam.cameraProperties.perspective.zfar;
             aicam->mClipPlaneNear = cam.cameraProperties.perspective.znear;
         } else {
